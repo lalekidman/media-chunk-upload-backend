@@ -52,7 +52,8 @@ export default class _Router {
       })
       readableStream.on("end", () => {
         const imageBinary = Buffer.from(based64, 'base64')
-        fs.writeFile(`${fileLocation}.png`, imageBinary, (err: any) => {
+
+        fs.writeFile(`${fileLocation}.mp4`, imageBinary, (err: any) => {
           fs.unlinkSync(fileLocation)
         })
       })
