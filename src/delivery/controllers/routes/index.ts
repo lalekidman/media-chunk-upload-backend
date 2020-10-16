@@ -40,10 +40,8 @@ export default class _Router {
       this.uploadedMedia.push(media)
     }
     const fileLocation = __dirname.concat(`/../../../../temp/${media._id}`)
-    // delete media.mediaBased64String
     const writableStream = fs.createWriteStream(fileLocation, {flags: 'as', encoding: 'utf8'})
     writableStream.write(media.mediaBased64String, () => {
-      console.log(' >> done? : ')
       res.end()
     })
     if (media.last) {
@@ -55,6 +53,7 @@ export default class _Router {
       readableStream.on("end", () => {
         const imageBinary = Buffer.from(based64, 'base64')
         fs.writeFile(`${fileLocation}.png`, imageBinary, (err: any) => {
+          fs.unlinkSync(fileLocation)
         })
       })
     }
