@@ -42,21 +42,22 @@ export default class _Router {
     const fileLocation = __dirname.concat(`/../../../../temp/${media._id}`)
     // delete media.mediaBased64String
     const writableStream = fs.createWriteStream(fileLocation, {flags: 'as', encoding: 'utf8'})
-    writableStream.write(media.mediaBased64String)
+    writableStream.write(media.mediaBased64String, () => {
+      console.log(' >> done? : ')
+      res.end()
+    })
     if (media.last) {
       let based64 = <string>''
-      const writableStream = fs.createReadStream(fileLocation, {encoding: 'utf8'})
-      writableStream.on("data", (chunk) => {
+      const readableStream = fs.createReadStream(fileLocation, {encoding: 'utf8'})
+      readableStream.on("data", (chunk) => {
         based64 = based64.concat(chunk.replace("data:image/png;base64,", ""))
       })
-      writableStream.on("end", () => {
+      readableStream.on("end", () => {
         const imageBinary = Buffer.from(based64, 'base64')
-        // console.log(' > imageBinaxxry: ', imageBinary)
         fs.writeFile(`${fileLocation}.png`, imageBinary, (err: any) => {
         })
       })
     }
-    res.end()
   }
   private getByIdRoute = (req: Request, res: Response, next: NextFunction) => {
     res.status(HttpStatus.OK).send({result: true})
