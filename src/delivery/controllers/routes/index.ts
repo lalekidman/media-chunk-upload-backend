@@ -6,6 +6,7 @@ import {MainUseCase} from '../../../use-cases/index'
 import {MainDB} from '../../../app-plugins/persistence/db'
 import * as fs from 'fs'
 const multiPartMiddleWare = require('connect-multiparty')()
+const mediaPattern = /^(image\/png|video\/mp4)$/i
 export default class _Router {
   /**
    * @class initiate router class
@@ -35,6 +36,8 @@ export default class _Router {
   private uploadRoute = (req: Request, res: Response, next: NextFunction) => {
     // const data = req.body
     const {media = ''} = req.body
+    const mediaType = <string> media.mediaType
+    const fileExtension = mediaType.match(mediaPattern) ? media.mediaType.split("/")[1] : ""
     const index = this.uploadedMedia.findIndex((media) => media._id === media._id)
     if (index === -1) {
       this.uploadedMedia.push(media)
@@ -48,13 +51,14 @@ export default class _Router {
       let based64 = <string>''
       const readableStream = fs.createReadStream(fileLocation, {encoding: 'utf8'})
       readableStream.on("data", (chunk) => {
-        based64 = based64.concat(chunk.replace("data:image/png;base64,", ""))
+        based64 = based64.concat(chunk.replace(/(data\:application\/octet\-stream\;base64\,|data\:image\/png\;base64\,)/, ""))
+        // based64 = based64.concat(chunk.replace("data:image/png;base64,", ""))
       })
       readableStream.on("end", () => {
-        const imageBinary = Buffer.from(based64, 'base64')
+        // const imageBinary = Buffer.from(based64, 'base64')
 
-        fs.writeFile(`${fileLocation}.mp4`, imageBinary, (err: any) => {
-          fs.unlinkSync(fileLocation)
+        fs.writeFile(`${fileLocation}.${fileExtension}`, based64, 'base64', (err: any) => {
+          // fs.unlinkSync(fileLocation)
         })
       })
     }

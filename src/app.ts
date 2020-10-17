@@ -77,8 +77,8 @@ class App {
     // this.app.set('views', path.join(__dirname, '../views'))
     this.app.set('view engine', 'hbs')
     this.app.use(cookieParser())
-    this.app.use(bodyParser.json())
-    this.app.use(bodyParser.urlencoded({ extended: false }))
+    this.app.use(bodyParser.json({limit: "150mb"}))
+    this.app.use(bodyParser.urlencoded({ extended: false, limit: "200mb" }))
     this.app.use(session({
       secret: SECRET,
       saveUninitialized: true,
