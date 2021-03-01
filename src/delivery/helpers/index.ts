@@ -1,8 +1,8 @@
-import * as moment from 'moment'
 import { IRequest} from '../utils/interfaces';
+import moment from 'moment'
 import {Request, Response, NextFunction} from 'express'
 import {validationResult} from 'express-validator'
-import * as HttpStatus from 'http-status-codes'
+import HttpStatus from 'http-status-codes'
 import {ImagePattern, MobileNumberPattern} from '../utils/regex-pattern'
 import * as RegexValidator from '../utils/regex-pattern'
 import { REQUEST_LOCATION_TYPES } from '../utils/constants';
@@ -76,6 +76,7 @@ export const requestParamsValidatorMiddleware = (pipeline: any[], imageFileName?
     
     const validateUploadedImage = (uploadedImage: string | IRequestImageParamValidation) => {
       const _paramName = (typeof(uploadedImage) === 'string') ? uploadedImage : uploadedImage.fileName
+      //@ts-expect-error
       var image = req.files[_paramName]
       const imageURL = req.body[_paramName]
       if (imageURL && (typeof imageURL === 'string' && ImagePattern.test(imageURL))) {

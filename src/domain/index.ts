@@ -1,4 +1,4 @@
-import * as uuid from 'uuid/v4'
+import uuid from 'uuid/v4'
 import MainEntity, {IMainEntityData} from './entity/main'
 import {IMainGateway} from './interface-gateways/IMain'
 import {IPaginationQueryParams, IAggregatePagination, IGeneralGateway} from './interface-gateways/IGeneral'

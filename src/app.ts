@@ -1,18 +1,18 @@
 require('dotenv').config({path: `${__dirname}/../.env`})
-import * as express from 'express'
+import express from 'express'
 import {Request, Response, NextFunction} from 'express'
-import * as path from 'path'
-import * as bodyParser from 'body-parser'
-import * as passport from 'passport'
-import * as HttpStatus from 'http-status-codes'
-import * as morgan from 'morgan'
-import * as session from 'express-session';
-import * as cookieParser from 'cookie-parser'
+import path from 'path'
+import bodyParser from 'body-parser'
+import passport from 'passport'
+import HttpStatus from 'http-status-codes'
+import morgan from 'morgan'
+import session from 'express-session';
+import cookieParser from 'cookie-parser'
 
 import flash = require('connect-flash')
 
 import {Server as SocketServer} from 'socket.io'
-import * as socketio from 'socket.io'
+import socketio from 'socket.io'
 import {createServer, Server} from 'http'
 import DB from './app-plugins/persistence/db'
 import { DB_HOST, DB_NAME, SERVER_PORT } from './delivery/utils/constants'
@@ -23,7 +23,7 @@ import { DB_HOST, DB_NAME, SERVER_PORT } from './delivery/utils/constants'
 
 import MainRoute from './delivery/controllers/routes'
 const SECRET = 'A_SAMPLE_SECRET_FOR_SESSION_EXPRESS'
-// import * as MongoOplog from 'mongo-oplog'
+// import MongoOplog from 'mongo-oplog'
 // import {} from 'mongo-oplog'
 // import { Db } from 'mongodb';
 
@@ -90,7 +90,8 @@ class App {
     this.app.use((req: Request, res: Response, next: NextFunction) => {
       res.header('Access-Control-Allow-Origin', '*')
       // res.header('Access-Control-Allow-Origin', 'http://localhost:3000')
-      res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Authorization, Content-Type, Accept')
+      res.header('Access-Control-Allow-Headers', '*')
+      res.header('Access-Control-Allow-Headers', 'X-File-Id, X-File-Size, Origin, X-Requested-With, Authorization, Content-Type, Accept')
       res.setHeader('Access-Control-Allow-Credentials', 'true');
       if (req.method === 'OPTIONS') {
         res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE')

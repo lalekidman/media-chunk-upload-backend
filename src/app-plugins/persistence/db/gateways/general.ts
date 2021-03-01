@@ -1,7 +1,7 @@
 import {
   Document, Model
 } from '../index'
-import * as uuid from 'uuid/v4'
+import uuid from 'uuid/v4'
 export interface IPaginationParameters {
   limitTo?: number
   startAt?: number

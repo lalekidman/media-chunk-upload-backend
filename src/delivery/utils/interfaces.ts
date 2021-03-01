@@ -14,7 +14,6 @@ export interface UploadedImage {
   imageUrl?: string
 }
 export interface IRequest extends Request {
-  files?: any
   payload?: any
   fingerprint?: IFingerprint
 }
