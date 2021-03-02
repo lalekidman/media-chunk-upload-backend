@@ -4,9 +4,9 @@ import fs from 'fs'
 import Busboy from 'busboy'
 const multiPartMiddleWare = require('connect-multiparty')()
 const mediaPattern = /^(image\/png|video\/mp4)$/i
-
+const blobLoc = __dirname.concat(`/../../../../uploads`)
 const getBlobpath = (fileId: string) => {
-  return __dirname.concat(`/../../../../uploads/${fileId}`)
+  return `${blobLoc}/${fileId}`
 }
 // const storage = multer.diskStorage({
 //   destination: (req, file, callback) => {
@@ -38,17 +38,40 @@ export default class _Router {
       file.on('end', function() {
         const stats = fs.statSync(getBlobpath(fileId))
         if (stats.size === fileSize) {
+          req.file = {
+            filename,
+            fieldname,
+            encoding,
+            mimetype,
+            //@ts-expect-error
+            location: blobLoc,
+            path: getBlobpath(fileId),
+          }
           console.log('##########################3 SHOULD CALL NEXT ROUTE');
+          next()
+          return
         } else {
+          res.sendStatus(HttpStatus.ACCEPTED)
           console.log('########################## SHOULD CALL RESPONSE HTTP');
         }
       });
     });
-    busboy.on('finish', function() {
-      res.writeHead(200, { 'Connection': 'close' });
-      res.end("That's all folks!");
-    });
+    // busboy.on('finish', function() {
+    //   console.log('FUCKING FINISH?');
+    //   res.writeHead(200, { 'Connection': 'close' });
+    //   res.end("That's all folks!");
+    // });
     req.pipe(busboy)
+  }
+  private blobStatus = (req: Request, res: Response, next: NextFunction) => {
+    const {fileId} = req.query
+    if (!(fs.existsSync(getBlobpath(fileId)))) {
+      res.status(HttpStatus.BAD_GATEWAY).send({error: "No blob found."})
+    }
+    const blobStats = fs.statSync(getBlobpath(fileId))
+    res.status(HttpStatus.OK).json({
+      totalBytesUploaded: blobStats.size
+    })
   }
   private listRoute = (req: Request, res: Response, next: NextFunction) => {
     res.sendStatus(HttpStatus.OK)
@@ -57,6 +80,7 @@ export default class _Router {
     // const data = req.body
   }
   private uploadRoute = (req: Request, res: Response, next: NextFunction) => {
+    console.log('object :>> ', req.file);
     // const data = req.body
     // res.end()
     // let {last = '', _id = '', mediaBuffer} = req.body
@@ -134,6 +158,7 @@ export default class _Router {
       // requestParamsValidatorMiddleware(IndexPostValidationPipeline),
       this.addRoute
     )
+    this.router.get('/status', this.blobStatus)
     this.router.post('/upload',
       this.busboyMiddleware,
       this.uploadRoute
